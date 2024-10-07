@@ -150,6 +150,14 @@ export const AWS_SCHEME = 'aws' // eslint-disable-line @typescript-eslint/naming
 export const ec2LogsScheme = 'aws-ec2'
 export const amazonQDiffScheme = 'amazon-q-diff'
 
+export const startLiveTailHelpUrl =
+    'https://docs.aws.amazon.com/AmazonCloudWatchLogs/latest/APIReference/API_StartLiveTail.html'
+export const startLiveTailLogStreamPrefixHelpUrl = `${startLiveTailHelpUrl}#CWL-StartLiveTail-request-logStreamNamePrefixes`
+export const startLiveTailLogStreamNamesHelpUrl = `${startLiveTailHelpUrl}#CWL-StartLiveTail-request-logStreamNames`
+
+export const cwlFilterPatternHelpUrl =
+    'https://docs.aws.amazon.com/AmazonCloudWatch/latest/logs/FilterAndPatternSyntax.html'
+
 export const lambdaPackageTypeImage = 'Image'
 
 // URLs for App Runner

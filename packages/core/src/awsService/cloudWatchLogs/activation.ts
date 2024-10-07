@@ -23,6 +23,10 @@ import { DeployedResourceNode } from '../appBuilder/explorer/nodes/deployedNode'
 import { isTreeNode } from '../../shared/treeview/resourceTreeDataProvider'
 import { getLogger } from '../../shared/logger/logger'
 import { ToolkitError } from '../../shared'
+import {  clearDocument, closeSession, tailLogGroup } from './commands/tailLogGroup'
+import { LiveTailDocumentProvider } from './document/liveTailDocumentProvider'
+import { LiveTailSessionRegistry } from './registry/liveTailSessionRegistry'
+import { LiveTailCodeLensProvider } from './document/liveTailCodeLensProvider'
 
 export async function activate(context: vscode.ExtensionContext, configuration: Settings): Promise<void> {
     const registry = LogDataRegistry.instance
@@ -94,7 +98,15 @@ export async function activate(context: vscode.ExtensionContext, configuration: 
         Commands.register('aws.cwl.changeFilterPattern', async () => changeLogSearchParams(registry, 'filterPattern')),
 
         Commands.register('aws.cwl.changeTimeFilter', async () => changeLogSearchParams(registry, 'timeFilter')),
+,
 
+        Commands.register('aws.cwl.tailLogGroup', async (node: LogGroupNode | CloudWatchLogsNode) => {
+            const logGroupInfo =
+                node instanceof LogGroupNode
+                    ? { regionName: node.regionCode, groupName: node.logGroup.logGroupName! }
+                    : undefined
+            await tailLogGroup(logGroupInfo)
+        })
         Commands.register('aws.appBuilder.searchLogs', async (node: DeployedResourceNode) => {
             try {
                 const logGroupInfo = isTreeNode(node)
