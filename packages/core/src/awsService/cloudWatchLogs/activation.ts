@@ -4,7 +4,7 @@
  */
 
 import * as vscode from 'vscode'
-import { CLOUDWATCH_LOGS_SCHEME } from '../../shared/constants'
+import { CLOUDWATCH_LOGS_LIVETAIL_SCHEME, CLOUDWATCH_LOGS_SCHEME } from '../../shared/constants'
 import { Settings } from '../../shared/settings'
 import { addLogEvents } from './commands/addLogEvents'
 import { copyLogResource } from './commands/copyLogResource'
@@ -27,11 +27,14 @@ import {  clearDocument, closeSession, tailLogGroup } from './commands/tailLogGr
 import { LiveTailDocumentProvider } from './document/liveTailDocumentProvider'
 import { LiveTailSessionRegistry } from './registry/liveTailSessionRegistry'
 import { LiveTailCodeLensProvider } from './document/liveTailCodeLensProvider'
+import { tailLogGroup } from './commands/tailLogGroup'
 
 export async function activate(context: vscode.ExtensionContext, configuration: Settings): Promise<void> {
     const registry = LogDataRegistry.instance
+    const liveTailRegistry = LiveTailSessionRegistry.instance
 
     const documentProvider = new LogDataDocumentProvider(registry)
+    const liveTailDocumentProvider = new LiveTailDocumentProvider()
 
     context.subscriptions.push(
         vscode.languages.registerCodeLensProvider(
@@ -45,6 +48,10 @@ export async function activate(context: vscode.ExtensionContext, configuration: 
 
     context.subscriptions.push(
         vscode.workspace.registerTextDocumentContentProvider(CLOUDWATCH_LOGS_SCHEME, documentProvider)
+    )
+
+    context.subscriptions.push(
+        vscode.workspace.registerTextDocumentContentProvider(CLOUDWATCH_LOGS_LIVETAIL_SCHEME, liveTailDocumentProvider)
     )
 
     context.subscriptions.push(
@@ -105,7 +112,7 @@ export async function activate(context: vscode.ExtensionContext, configuration: 
                 node instanceof LogGroupNode
                     ? { regionName: node.regionCode, groupName: node.logGroup.logGroupName! }
                     : undefined
-            await tailLogGroup(logGroupInfo)
+            await tailLogGroup(liveTailRegistry, logGroupInfo)
         })
         Commands.register('aws.appBuilder.searchLogs', async (node: DeployedResourceNode) => {
             try {
