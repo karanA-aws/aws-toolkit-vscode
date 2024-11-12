@@ -44,6 +44,21 @@ export enum CodeGenerationStatus {
     FAILED = 'Failed',
 }
 
+export enum FollowUpTypes {
+    GenerateCode = 'GenerateCode',
+    InsertCode = 'InsertCode',
+    ProvideFeedbackAndRegenerateCode = 'ProvideFeedbackAndRegenerateCode',
+    Retry = 'Retry',
+    ModifyDefaultSourceFolder = 'ModifyDefaultSourceFolder',
+    DevExamples = 'DevExamples',
+    NewTask = 'NewTask',
+    CloseSession = 'CloseSession',
+    SendFeedback = 'SendFeedback',
+    AcceptAutoBuild = 'AcceptAutoBuild',
+    DenyAutoBuild = 'DenyAutoBuild',
+    GenerateDevFile = 'GenerateDevFile',
+}
+
 export type SessionStatePhase = DevPhase.INIT | DevPhase.CODEGEN
 
 export type CurrentWsFolders = [vscode.WorkspaceFolder, ...vscode.WorkspaceFolder[]]

@@ -167,6 +167,7 @@ export const codefileExtensions = new Set([
     '.cc',
     '.cfc',
     '.cfg',
+    '.cfg',
     '.cfm',
     '.cjs',
     '.clj',

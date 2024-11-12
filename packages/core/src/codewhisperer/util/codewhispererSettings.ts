@@ -15,6 +15,7 @@ const description = {
     workspaceIndexMaxSize: Number,
     devCommandWorkspaceConfigurations: Object,
     ignoredSecurityIssues: ArrayConstructor(String),
+    devCommandWorkspaceConfigurations: Object,
 }
 
 export class CodeWhispererSettings extends fromExtensionManifest('amazonQ', description) {
@@ -69,6 +70,18 @@ export class CodeWhispererSettings extends fromExtensionManifest('amazonQ', desc
 
     public async addToIgnoredSecurityIssuesList(issueTitle: string) {
         await this.update('ignoredSecurityIssues', [...this.getIgnoredSecurityIssues(), issueTitle])
+    }
+
+    public getDevCommandWorkspaceConfigurations(): { [key: string]: boolean } {
+        return this.get('devCommandWorkspaceConfigurations', {})
+    }
+
+    public async updateDevCommandWorkspaceConfigurations(projectName: string, setting: boolean) {
+        const projects = this.getDevCommandWorkspaceConfigurations()
+
+        projects[projectName] = setting
+
+        await this.update('devCommandWorkspaceConfigurations', projects)
     }
 
     static #instance: CodeWhispererSettings

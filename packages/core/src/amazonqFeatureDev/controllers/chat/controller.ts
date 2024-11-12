@@ -50,6 +50,8 @@ import { FollowUpTypes } from '../../../amazonq/commons/types'
 import { Messenger } from '../../../amazonq/commons/connector/baseMessenger'
 import { BaseChatSessionStorage } from '../../../amazonq/commons/baseChatStorage'
 
+export const TotalSteps = 3
+
 export interface ChatControllerEventEmitters {
     readonly processHumanChatMessage: EventEmitter<any>
     readonly followUpClicked: EventEmitter<any>
@@ -572,8 +574,9 @@ export class FeatureDevController {
             if (session?.state?.tokenSource?.token.isCancellationRequested) {
                 await this.workOnNewTask(
                     session.tabID,
-                    session.state.codeGenerationRemainingIterationCount,
-                    session.state.codeGenerationTotalIterationCount,
+                    session.state.codeGenerationRemainingIterationCount ||
+                        TotalSteps - (session.state?.currentIteration || 0),
+                    session.state.codeGenerationTotalIterationCount || TotalSteps,
                     session?.state?.tokenSource?.token.isCancellationRequested
                 )
                 this.disposeToken(session)
@@ -614,7 +617,9 @@ export class FeatureDevController {
         totalIterations?: number,
         isStoppedGeneration: boolean = false
     ) {
-        const hasDevFile = await checkForDevFile((await this.sessionStorage.getSession(tabID)).getWorkspaceRoot())
+        const hasDevFile = await checkForDevFile(
+            (await this.sessionStorage.getSession(message.tabID)).getWorkspaceRoot()
+        )
 
         if (isStoppedGeneration) {
             this.messenger.sendAnswer({
@@ -673,7 +678,10 @@ export class FeatureDevController {
 
         // Ensure that chat input is enabled so that they can provide additional iterations if they choose
         this.messenger.sendChatInputEnabled(tabID, true)
-        this.messenger.sendUpdatePlaceholder(tabID, i18n('AWS.amazonq.featureDev.placeholder.additionalImprovements'))
+        this.messenger.sendUpdatePlaceholder(
+            tabID,
+            i18n('AWS.amazonq.featureDev.placeholder.additionalImprovements')
+        )
     }
 
     private async processDevCommandWorkspaceSetting(setting: boolean, msg: any) {
