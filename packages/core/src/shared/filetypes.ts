@@ -357,8 +357,8 @@ export const codefileExtensions = new Set([
     '.zig',
 ])
 
-// Some well-known code files without an extension
-export const wellKnownCodeFiles = new Set(['Dockerfile', 'Dockerfile.build'])
+// Code file names without an extension
+export const codefileNames = new Set(['Dockerfile', 'Dockerfile.build'])
 
 /** Returns true if `filename` is a code file. */
 export function isCodeFile(filename: string): boolean {
